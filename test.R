@@ -25,5 +25,26 @@ dell = company %>%
 summary(dell)
 
 test = company %>% 
-  filter(., (price >= 100) & (price <= 200)) %>% 
-  select(., price, percent, review_num, my_score, rank)
+  filter(., (price >= 100) & (price <= 200))
+test1 = company %>% 
+  filter(., as.logical(apply(sapply(c('price', 'bar'), function(x) grepl(x, company$pros)), 1, prod)))
+
+sti = c('a', 'b', 'c')
+grepl('a c', sti)
+'a c' %in% sti
+c('a', 'c') %in% sti
+all(c(T,F,T,F), c(F,T,T,T))
+a = c(T,F,T,F)
+b = c(F,F,F,T)
+c = matrix(c(a, b), nrow = length(a))
+as.logical(apply(c, 1, prod))
+c = cbind(a, b)
+as.logical(apply(c, 1, prod))
+
+
+
+
+
+
+
+

@@ -188,17 +188,31 @@ function(input, output, session) {
   })
   
   rec_dep1 = reactive({
-    company %>% 
-      filter(., (price >= input$sel_pros[1]) & (price <= input$sel_pros[2])) %>% 
-      filter(., grepl(input$rec_pros, pros)) %>% 
-      select(., proc_name, price, percent, review_num, my_score, rank)
+    temp = company %>% 
+      filter(., (price >= input$sel_pros[1]) & (price <= input$sel_pros[2]))
+    if (length(input$rec_pros) == 0) {
+      temp %>% 
+        filter(., grepl('ease', pros)) %>% 
+        select(., proc_name, price, percent, review_num, my_score, rank)
+    } else {
+      temp %>% 
+        filter(., as.logical(apply(sapply(input$rec_pros, function(x) grepl(x, temp$pros)), 1, prod))) %>% 
+        select(., proc_name, price, percent, review_num, my_score, rank)
+    }
   })
   
   rec_dep2 = reactive({
-    company %>% 
-      filter(., (price >= input$sel_cons[1]) & (price <= input$sel_cons[2])) %>% 
-      filter(., grepl(input$rec_cons, cons)) %>% 
-      select(., proc_name, price, percent, review_num, my_score, rank)
+    temp = company %>% 
+      filter(., (price >= input$sel_cons[1]) & (price <= input$sel_cons[2]))
+    if (length(input$rec_cons) == 0) {
+      temp %>% 
+        filter(., grepl('noise', cons)) %>% 
+        select(., proc_name, price, percent, review_num, my_score, rank)
+    } else {
+      temp %>% 
+        filter(., as.logical(apply(sapply(input$rec_cons, function(x) grepl(x, temp$cons)), 1, prod))) %>% 
+        select(., proc_name, price, percent, review_num, my_score, rank)
+    }
   })
   
   output$my_score = renderPlot({
@@ -354,7 +368,4 @@ function(input, output, session) {
   output$rec_name_cons = renderPrint({
     print(unique(rec_dep2()$proc_name))
   })
-  
-  
-  
 }
